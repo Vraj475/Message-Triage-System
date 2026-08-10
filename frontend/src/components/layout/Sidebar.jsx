@@ -51,7 +51,7 @@ export default function Sidebar() {
           }}
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="var(--accent)" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="var(--accent)" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span style={{ fontWeight: 700, fontSize: '18px', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             TriageAI
@@ -75,7 +75,7 @@ export default function Sidebar() {
         <nav style={{ padding: '16px 0' }}>
           {[
             { to: '/', label: 'Dashboard', icon: 'bi-grid-1x2-fill' },
-            { to: '/upload', label: 'Messages & Paste', icon: 'bi-file-earmark-plus-fill' },
+            { to: '/upload', label: 'Upload Messages', icon: 'bi-file-earmark-plus-fill' },
             { to: '/eval', label: 'Evaluation', icon: 'bi-clipboard-data-fill' },
             { to: '/health', label: 'System Health', icon: 'bi-heart-pulse-fill' },
           ].map(link => (
