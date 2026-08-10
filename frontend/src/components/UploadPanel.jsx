@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useToast } from '../context/ToastContext';
 
 export default function UploadPanel({ onUploadComplete }) {
+  const { addToast } = useToast();
   const [pasteText, setPasteText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+
+  const parsedLines = pasteText
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
 
   async function handleSubmitPaste() {
-    const lines = pasteText
-      .split('\n')
-      .map(l => l.trim())
-      .filter(l => l.length > 0);
-
-    if (lines.length === 0) {
+    if (parsedLines.length === 0) {
       setError('Please paste at least one message (one per line).');
       return;
     }
-    await submitMessages(lines, 'paste');
+    await submitMessages(parsedLines, 'paste');
   }
 
   async function handleFileUpload(e) {
@@ -35,14 +36,12 @@ export default function UploadPanel({ onUploadComplete }) {
     } catch (err) {
       setError('Could not parse JSON file. Expected an array of strings or objects.');
     }
-    // Reset file input
     e.target.value = '';
   }
 
   async function submitMessages(messages, source, fileName) {
     setLoading(true);
     setError('');
-    setSuccess('');
 
     try {
       const endpoint = source === 'upload' ? '/api/datasets/upload' : '/api/datasets/paste';
@@ -50,65 +49,100 @@ export default function UploadPanel({ onUploadComplete }) {
         messages,
         fileName,
       });
-      setSuccess(`Created dataset with ${response.data.total} messages. Click "Triage All Pending" to process.`);
+      addToast(`Dataset created with ${response.data.total} messages.`, 'success');
       setPasteText('');
-      onUploadComplete(response.data.dataset);
+      if (onUploadComplete) onUploadComplete(response.data.dataset);
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.details?.join(', ') || err.message || 'Request failed');
+      const msg = err.response?.data?.error || err.response?.data?.details?.join(', ') || err.message || 'Upload failed';
+      setError(msg);
+      addToast(msg, 'danger');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="card mb-4">
-      <div className="card-header fw-semibold">
-        <i className="bi bi-upload me-2"></i>
-        Upload Messages
+    <div className="card mb-4" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+      <div className="card-header fw-semibold py-3 d-flex align-items-center justify-content-between" style={{ backgroundColor: 'transparent', borderBottom: '1px solid var(--border)' }}>
+        <div className="d-flex align-items-center gap-2">
+          <i className="bi bi-cloud-arrow-up-fill text-primary"></i>
+          <span>Upload Customer Messages</span>
+        </div>
+        {parsedLines.length > 0 && (
+          <span className="badge" style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--accent)', border: '1px solid var(--border)' }}>
+            {parsedLines.length} message{parsedLines.length === 1 ? '' : 's'} detected
+          </span>
+        )}
       </div>
       <div className="card-body">
-        {/* Paste Mode */}
-        <div className="mb-3">
-          <label className="form-label fw-semibold small">Paste messages (one per line)</label>
+        {/* Monospace Paste Box with Dashed Border */}
+        <div
+          style={{
+            border: '2px dashed var(--border)',
+            borderRadius: '8px',
+            backgroundColor: 'var(--bg-primary)',
+            padding: '16px',
+            marginBottom: '16px',
+          }}
+        >
+          <label className="form-label fw-semibold small text-muted mb-2">
+            Paste raw customer messages (one line per message)
+          </label>
           <textarea
-            className="form-control font-monospace"
-            rows={4}
-            placeholder={"My payment failed again\nApp keeps crashing on login\nWhere is my refund?"}
+            className="form-control font-mono"
+            rows={5}
+            placeholder={"I was charged twice for subscription\nPlease refund $29 immediately\nApp keeps crashing when I login"}
             value={pasteText}
-            onChange={e => { setPasteText(e.target.value); setError(''); setSuccess(''); }}
+            onChange={e => { setPasteText(e.target.value); setError(''); }}
             disabled={loading}
-            style={{ fontSize: '0.85em' }}
+            style={{
+              fontSize: '12px',
+              backgroundColor: 'var(--bg-elevated)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border)',
+            }}
           />
-          <button
-            className="btn btn-primary btn-sm mt-2"
-            onClick={handleSubmitPaste}
-            disabled={loading || !pasteText.trim()}
-          >
-            {loading ? (
-              <><span className="spinner-border spinner-border-sm me-1" />Uploading...</>
-            ) : (
-              <><i className="bi bi-plus-circle me-1" />Create Dataset</>
-            )}
-          </button>
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <span className="text-muted" style={{ fontSize: '11px' }}>
+              Each line is stored as a separate pending message.
+            </span>
+            <button
+              className="btn btn-sm text-white fw-bold"
+              style={{ backgroundColor: 'var(--accent)', border: 'none', padding: '6px 16px' }}
+              onClick={handleSubmitPaste}
+              disabled={loading || parsedLines.length === 0}
+            >
+              {loading ? (
+                <><span className="spinner-border spinner-border-sm me-1" />Creating...</>
+              ) : (
+                <><i className="bi bi-plus-lg me-1" />Upload Dataset</>
+              )}
+            </button>
+          </div>
         </div>
 
-        <div className="text-muted text-center small mb-3">— or —</div>
-
-        {/* File Upload Mode */}
-        <div>
-          <label className="form-label fw-semibold small">Upload JSON file</label>
-          <input
-            type="file"
-            accept=".json"
-            className="form-control form-control-sm"
-            onChange={handleFileUpload}
-            disabled={loading}
-          />
-          <div className="form-text">Format: <code>["msg1", "msg2"]</code> or <code>[{"{"}"text":"msg"{"}"}]</code></div>
+        {/* JSON File Upload */}
+        <div className="d-flex align-items-center gap-3 pt-2 border-top border-secondary">
+          <div style={{ flex: 1 }}>
+            <label className="form-label fw-semibold small text-muted mb-1">
+              Upload JSON file
+            </label>
+            <input
+              type="file"
+              accept=".json"
+              className="form-control form-control-sm"
+              style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
+              onChange={handleFileUpload}
+              disabled={loading}
+            />
+          </div>
         </div>
 
-        {success && <div className="alert alert-success mt-3 mb-0 small"><i className="bi bi-check-circle me-1"></i>{success}</div>}
-        {error && <div className="alert alert-danger mt-3 mb-0 small">{error}</div>}
+        {error && (
+          <div className="alert alert-danger mt-3 mb-0 small py-2">
+            <i className="bi bi-exclamation-triangle me-1"></i>{error}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,51 +1,82 @@
-import React from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import axios from 'axios';
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
 import Evaluation from './pages/Evaluation';
 import SystemHealth from './pages/SystemHealth';
+import UploadPanel from './components/UploadPanel';
+import { ToastProvider } from './context/ToastContext';
 
 export default function App() {
-  const location = useLocation();
+  const [datasets, setDatasets] = useState([]);
+  const [activeDatasetId, setActiveDatasetId] = useState('');
 
-  function navClass(path) {
-    return `nav-link ${location.pathname === path ? 'text-white fw-bold' : 'text-secondary'}`;
+  useEffect(() => {
+    loadDatasets();
+  }, []);
+
+  async function loadDatasets() {
+    try {
+      const res = await axios.get('/api/datasets');
+      setDatasets(res.data);
+      if (res.data.length > 0 && !activeDatasetId) {
+        setActiveDatasetId(res.data[0]._id);
+      }
+    } catch {}
+  }
+
+  function handleSelectDataset(id) {
+    setActiveDatasetId(id);
   }
 
   return (
-    <>
-      <nav className="navbar navbar-dark px-3" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
-        <span className="navbar-brand fw-bold">
-          <i className="bi bi-funnel-fill me-2"></i>
-          Message Triage System
-          <span className="badge bg-warning text-dark ms-2" style={{ fontSize: '0.55em', verticalAlign: 'middle' }}>PROVISIONAL</span>
-        </span>
-        <div className="d-flex gap-3">
-          <Link to="/" className={navClass('/')}>
-            <i className="bi bi-speedometer2 me-1"></i>Dashboard
-          </Link>
-          <Link to="/eval" className={navClass('/eval')}>
-            <i className="bi bi-clipboard-check me-1"></i>Evaluation
-          </Link>
-          <Link to="/health" className={navClass('/health')}>
-            <i className="bi bi-heart-pulse me-1"></i>Health
-          </Link>
+    <ToastProvider>
+      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+        {/* Fixed 240px Sidebar */}
+        <Sidebar />
+
+        {/* Main Content Area */}
+        <div style={{ flex: 1, marginLeft: '240px', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          <Header
+            datasets={datasets}
+            activeDatasetId={activeDatasetId}
+            onSelectDataset={handleSelectDataset}
+          />
+
+          <main style={{ padding: '24px 28px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Dashboard
+                    datasets={datasets}
+                    activeDatasetId={activeDatasetId}
+                    onSelectDataset={handleSelectDataset}
+                    onRefreshDatasets={loadDatasets}
+                  />
+                }
+              />
+              <Route
+                path="/upload"
+                element={
+                  <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <UploadPanel
+                      onUploadComplete={(ds) => {
+                        loadDatasets();
+                        setActiveDatasetId(ds._id);
+                      }}
+                    />
+                  </div>
+                }
+              />
+              <Route path="/eval" element={<Evaluation />} />
+              <Route path="/health" element={<SystemHealth />} />
+            </Routes>
+          </main>
         </div>
-      </nav>
-
-      {/* Triage-tool disclaimer */}
-      <div className="bg-dark text-secondary text-center py-1" style={{ fontSize: '0.75em', borderBottom: '1px solid #333' }}>
-        <i className="bi bi-info-circle me-1"></i>
-        Internal triage tool — classifies messages only. Does not send customer replies, emails, tickets, or refunds.
-        Categories and priority definitions are provisional.
       </div>
-
-      <div className="container-fluid px-4 py-4" style={{ background: '#f8f9fa', minHeight: 'calc(100vh - 90px)' }}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/eval" element={<Evaluation />} />
-          <Route path="/health" element={<SystemHealth />} />
-        </Routes>
-      </div>
-    </>
+    </ToastProvider>
   );
 }
