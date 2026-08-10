@@ -50,7 +50,7 @@ export default function Dashboard({ datasets = [], activeDatasetId, onSelectData
     try {
       const res = await axios.get(`/api/datasets/${datasetId}/messages`);
       setMessages(res.data);
-    } catch {}
+    } catch { }
   }
 
   async function handleTriageBatch() {
@@ -221,7 +221,7 @@ export default function Dashboard({ datasets = [], activeDatasetId, onSelectData
           ) : (
             <div className="text-center py-5" style={{ backgroundColor: 'var(--bg-surface)', border: '1px border-dashed var(--border)', borderRadius: '8px' }}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-3">
-                <path d="M4 4H20V16H14L12 19L10 16H4V4Z" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 4H20V16H14L12 19L10 16H4V4Z" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <h5 className="fw-semibold mb-1" style={{ color: 'var(--text-primary)' }}>No messages found</h5>
               <p className="small mb-3" style={{ color: 'var(--text-secondary)' }}>Upload or paste raw customer messages to start batch triaging.</p>

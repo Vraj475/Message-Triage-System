@@ -8,10 +8,10 @@ export default function Evaluation() {
   const [messages, setMessages] = useState([]);
   const [labels, setLabels] = useState({});   // message_id -> {category, priority, needsHuman}
   const [savedReviews, setSavedReviews] = useState({}); // message_id -> reviewId
-  
+
   const [categories, setCategories] = useState([]);
   const [priorities, setPriorities] = useState([]);
-  
+
   const [report, setReport] = useState(null);
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function Evaluation() {
       });
       setSavedReviews(reviewMap);
       setLabels(labelMap);
-    }).catch(() => {});
+    }).catch(() => { });
 
     // 4. Fetch past evaluation runs
     loadRuns();
@@ -79,7 +79,7 @@ export default function Evaluation() {
     axios.get('/api/evaluation').then(res => {
       setRuns(res.data);
       if (res.data.length > 0) setReport(res.data[0]);
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   function updateLabel(msgId, field, value) {
@@ -95,7 +95,7 @@ export default function Evaluation() {
       setError('Please set category, priority, and needs-human before saving.');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -174,8 +174,8 @@ export default function Evaluation() {
           </div>
           <div className="d-flex gap-2 align-items-center">
             <span className="small text-muted me-2">Select Dataset:</span>
-            <select 
-              className="form-select form-select-sm" 
+            <select
+              className="form-select form-select-sm"
               style={{ width: 'auto' }}
               value={activeDatasetId}
               onChange={e => setActiveDatasetId(e.target.value)}
@@ -185,7 +185,7 @@ export default function Evaluation() {
                 <option key={ds._id} value={ds._id}>{ds.name} ({ds.messageCount})</option>
               ))}
             </select>
-            <button 
+            <button
               className="btn btn-primary btn-sm ms-3"
               onClick={handleRunEvaluation}
               disabled={evaluating || !activeDatasetId}
@@ -198,12 +198,12 @@ export default function Evaluation() {
             </button>
           </div>
         </div>
-        
+
         <div className="card-body p-0">
           {loading ? (
-             <div className="text-center py-5">
-               <span className="spinner-border text-primary"></span>
-             </div>
+            <div className="text-center py-5">
+              <span className="spinner-border text-primary"></span>
+            </div>
           ) : messages.length === 0 ? (
             <div className="text-center py-5 text-muted fst-italic">
               No messages found in this dataset.
@@ -225,7 +225,7 @@ export default function Evaluation() {
                   const isSaved = !!savedReviews[msg._id];
                   const label = labels[msg._id] || {};
                   const triage = msg.triage;
-                  
+
                   return (
                     <tr key={msg._id} className={isSaved ? 'table-success' : ''}>
                       <td className="font-monospace" style={{ wordBreak: 'break-word', color: '#555' }}>
@@ -236,7 +236,7 @@ export default function Evaluation() {
                           <>
                             <div><span className="badge bg-secondary mb-1">{triage.priority}</span></div>
                             <div className="fw-semibold text-dark">{triage.category}</div>
-                            <div className="text-muted" style={{fontSize: '0.8em'}}>{Math.round(triage.confidence * 100)}% conf</div>
+                            <div className="text-muted" style={{ fontSize: '0.8em' }}>{Math.round(triage.confidence * 100)}% conf</div>
                           </>
                         ) : (
                           <span className="text-muted fst-italic">Not triaged</span>

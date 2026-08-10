@@ -58,9 +58,9 @@ export function CategoryBadge({ category, isApiFailure }) {
 
 export function PriorityBadge({ priority }) {
   const prioMap = {
-    P0: { bg: 'var(--danger)', color: '#ffffff' },
+    P0: { bg: 'var(--danger)', color: 'var(--bg-surface)' },
     P1: { bg: 'var(--warning)', color: '#0f1117' },
-    P2: { bg: 'var(--accent)', color: '#ffffff' },
+    P2: { bg: 'var(--accent)', color: 'var(--bg-surface)' },
     P3: { bg: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)' },
   };
 

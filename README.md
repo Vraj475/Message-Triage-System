@@ -1,63 +1,103 @@
-# Customer Message Triage System
+# TriageAI - Customer Message Triage System ⚡
 
-An internal tool for support teams to classify incoming customer messages using AI.
+![TriageAI Dashboard Banner](https://via.placeholder.com/1200x400/0f1117/e8eaf0?text=TriageAI+-+Intelligent+Customer+Support)
 
-**This is a triage tool, not a chatbot.** It reads raw messages and produces a structured triage decision:
-`{ category, priority (P0–P3), summary, suggested_action, needs_human, confidence }`
+TriageAI is a high-performance, AI-powered internal operations dashboard built for modern customer support teams. It takes raw batches of customer messages and uses advanced LLMs (Gemini / OpenRouter) to instantly triage, categorize, and prioritize them, completely removing the bottleneck of manual initial reviews.
 
-## Features
+## 🚀 Features
 
-- **Upload & Paste**: Ingest batches of messages via JSON file or manual text paste.
-- **Dynamic Configuration**: Categories and definitions are provisional and controlled via a centralized `constants.js` configuration module.
-- **AI Triage Pipeline**:
-  - Pre-filters garbage and unintelligible messages instantly (saves API costs).
-  - Truncates excessively long inputs.
-  - Automatically fails over if API rate limits are hit (graceful fallback).
-  - Validates and repairs AI JSON output.
-  - Computes `needs_human` flag based on confidence thresholds and critical (P0) rules.
-- **Evaluation Engine**:
-  - Support staff can manually label a sample of messages (Ground Truth).
-  - The Evaluation Engine compares AI decisions vs. Ground Truth and computes exact match rate, category accuracy, and human escalation accuracy.
-  - Stores a confusion matrix and highlights exact failure cases.
+*   **Intelligent Auto-Triage**: Automatically assigns categories (Billing, Technical, Refund, etc.), priority levels (P0-P3), and confidence scores to incoming messages.
+*   **Human-in-the-Loop Evaluation**: Ground truth evaluation module where human agents can override AI decisions.
+*   **Performance Metrics & Confusion Matrix**: Real-time evaluation dashboard comparing AI predictions vs. Human ground-truth to measure Category Match, Priority Match, and Escalation Accuracy.
+*   **Batch Processing**: Upload hundreds of messages at once and process them efficiently with built-in rate-limit handling and smart retries.
+*   **Modern "Dark Ops" UI**: A clinical, high-contrast, professional-grade interface optimized for operations teams handling high volumes of data. Built with React and tailored CSS variables.
+*   **Extensible AI Providers**: Seamlessly switch between Google Gemini, OpenRouter, or Mock AI for local testing.
 
-## Tech Stack
-- **Backend:** Node.js 20+, Express 4, Mongoose 8
-- **Frontend:** React 18, Vite, React Router, Axios, Bootstrap 5
-- **AI Integration:** Google Gemini SDK (`@google/generative-ai`), OpenRouter fallback
+## 🛠 Tech Stack
 
-## Getting Started
+**Frontend**
+*   React 18 + Vite
+*   React Router DOM v6
+*   Axios for API communication
+*   Bootstrap 5 (headless usage) + Custom CSS Token System
+
+**Backend**
+*   Node.js 20 + Express
+*   MongoDB (Mongoose ODM)
+*   `@google/generative-ai` & OpenRouter integrations
+
+## 📦 Installation & Setup
 
 ### Prerequisites
-- Node.js 20 or higher
-- MongoDB running locally on default port 27017
+*   Node.js v18 or v20+
+*   MongoDB (running locally on port `27017` or via MongoDB Atlas)
 
-### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   cd backend && npm install
-   cd ../frontend && npm install
-   ```
-3. Set up environment variables in `backend/.env`:
-   ```
-   PORT=5000
-   MONGODB_URI=mongodb://127.0.0.1:27017/triage_system
-   GEMINI_API_KEY=your_api_key_here
-   GEMINI_MODEL=gemini-1.5-flash
-   ```
+### 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/triage-ai.git
+cd triage-ai
+```
 
-### Running the App
-1. Start the backend: `cd backend && npm start`
-2. Start the frontend: `cd frontend && npm run dev`
-3. Open `http://localhost:5173` in your browser.
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+```
+Create a `.env` file in the `backend` directory:
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/triage_system
+AI_PROVIDER=gemini # options: gemini, openrouter, mock
+GEMINI_API_KEY=your_gemini_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
+Start the backend server:
+```bash
+npm start
+```
 
-## Architecture & Schema
-- `Dataset`: Represents a batch of uploaded messages.
-- `Message`: The raw input message from the customer.
-- `TriageResult`: The output from the AI (separated from Message for versioning and auditing).
-- `HumanReview`: Ground truth labels provided by human staff.
-- `EvaluationRun`: A point-in-time snapshot of system accuracy metrics.
+### 3. Frontend Setup
+```bash
+cd ../frontend
+npm install
+```
+Start the frontend development server:
+```bash
+npm run dev
+```
 
-## Security & Privacy Note
-- This tool does **not** send replies to customers.
-- Sensitive environment variables are masked in backend logs and never exposed to the frontend.
+The application will be available at `http://localhost:5173`.
+
+## 🧠 System Architecture
+
+1.  **Data Ingestion**: Users paste raw text messages into the Upload portal. The backend creates a unique `Dataset` and distinct `Message` documents.
+2.  **Triage Pipeline**: The Batch API pulls all pending messages and processes them sequentially (with jitter/delay) through the selected AI provider.
+3.  **Strict JSON Generation**: The system prompt aggressively enforces a JSON schema to ensure the LLM returns structured data (`category`, `priority`, `needsHuman`, `summary`).
+4.  **Guardrails**: Messages shorter than 10 characters immediately trigger a fallback offline triage (`needsHuman: true`), saving API costs.
+5.  **Metrics Generation**: Evaluation algorithms compute exactly where the LLM deviates from human logic.
+
+## 📂 Project Structure
+
+```text
+├── backend/
+│   ├── controllers/      # Route handlers
+│   ├── models/           # Mongoose schemas (Dataset, Message, Review)
+│   ├── routes/           # Express API routes
+│   ├── services/         # Core AI logic (triageService.js)
+│   ├── server.js         # Backend entry point
+│   └── .env
+└── frontend/
+    ├── src/
+    │   ├── components/   # Reusable UI components (TriageTable, EvalReport, etc.)
+    │   ├── pages/        # Main route views (Dashboard, Upload, Evaluation)
+    │   ├── styles/       # CSS tokens and design system (variables.css)
+    │   ├── App.jsx       # Routing & Layout
+    │   └── main.jsx
+    └── vite.config.js
+```
+
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+## 📝 License
+This project is licensed under the MIT License - see the LICENSE file for details.

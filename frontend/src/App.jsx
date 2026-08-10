@@ -24,7 +24,7 @@ export default function App() {
       if (res.data.length > 0 && !activeDatasetId) {
         setActiveDatasetId(res.data[0]._id);
       }
-    } catch {}
+    } catch { }
   }
 
   function handleSelectDataset(id) {
