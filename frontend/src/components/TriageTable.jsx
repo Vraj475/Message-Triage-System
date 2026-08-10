@@ -33,11 +33,11 @@ export default function TriageTable({ messages = [] }) {
   return (
     <div className="card shadow-sm">
       {/* Table Header Controls */}
-      <div className="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
+      <div className="card-header py-3 d-flex flex-wrap justify-content-between align-items-center gap-2" style={{ backgroundColor: 'transparent', borderBottom: '1px solid var(--border)' }}>
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-table text-primary"></i>
-          <span className="fw-semibold text-primary">Triage Results</span>
-          <span className="badge bg-secondary ms-1">{filteredMessages.length} items</span>
+          <span className="fw-semibold" style={{ color: 'var(--text-primary)' }}>Triage Results</span>
+          <span className="badge" style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--accent)', border: '1px solid var(--border)' }}>{filteredMessages.length} items</span>
         </div>
 
         <div className="d-flex flex-wrap align-items-center gap-2">

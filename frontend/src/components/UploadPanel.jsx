@@ -85,7 +85,7 @@ export default function UploadPanel({ onUploadComplete }) {
             marginBottom: '16px',
           }}
         >
-          <label className="form-label fw-semibold small text-muted mb-2">
+          <label className="form-label fw-semibold small  mb-2">
             Paste raw customer messages (one line per message)
           </label>
           <textarea
@@ -103,7 +103,7 @@ export default function UploadPanel({ onUploadComplete }) {
             }}
           />
           <div className="d-flex justify-content-between align-items-center mt-3">
-            <span className="text-muted" style={{ fontSize: '11px' }}>
+            <span style={{ fontSize: '11px' }}>
               Each line is stored as a separate pending message.
             </span>
             <button

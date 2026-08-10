@@ -1,6 +1,11 @@
 # TriageAI - Customer Message Triage System ⚡
 
-![TriageAI Dashboard Banner](https://via.placeholder.com/1200x400/0f1117/e8eaf0?text=TriageAI+-+Intelligent+Customer+Support)
+![TriageAI Dashboard Banner](./docs/banner.svg)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![React Version](https://img.shields.io/badge/react-18.2.0-blue.svg)](https://reactjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4%2B-green.svg)](https://www.mongodb.com/)
 
 TriageAI is a high-performance, AI-powered internal operations dashboard built for modern customer support teams. It takes raw batches of customer messages and uses advanced LLMs (Gemini / OpenRouter) to instantly triage, categorize, and prioritize them, completely removing the bottleneck of manual initial reviews.
 

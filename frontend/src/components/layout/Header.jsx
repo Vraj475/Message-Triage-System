@@ -59,8 +59,6 @@ export default function Header({ datasets = [], activeDatasetId, onSelectDataset
       {/* Right: New Upload Button & Time */}
       <div className="d-flex align-items-center gap-4">
         <div className="font-mono text-muted" style={{ fontSize: '12px', letterSpacing: '0.05em' }}>
-          <i className="bi bi-clock me-1 text-secondary"></i>
-          {timeStr}
         </div>
         <button
           className="btn btn-sm text-white font-semibold"

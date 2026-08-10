@@ -102,8 +102,24 @@ button:hover:not(:disabled), .btn:hover:not(:disabled) {
   color: var(--text-primary) !important;
 }
 
-.table {
+.card-header {
+  background-color: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
+}
+
+.table {
+  --bs-table-bg: transparent !important;
+  --bs-table-color: var(--text-primary) !important;
+  --bs-table-hover-bg: var(--bg-elevated) !important;
+  --bs-table-border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+.table thead, .table th {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-secondary) !important;
   border-color: var(--border) !important;
 }
 
@@ -121,4 +137,27 @@ button:hover:not(:disabled), .btn:hover:not(:disabled) {
 .form-control:focus, .form-select:focus {
   border-color: var(--accent) !important;
   box-shadow: 0 0 0 2px rgba(108, 143, 255, 0.25) !important;
+}
+
+.form-select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.alert-info {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.alert-danger {
+  background-color: rgba(242, 95, 92, 0.15) !important;
+  border-color: var(--danger) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-content {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
 }

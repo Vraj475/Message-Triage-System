@@ -50,29 +50,29 @@ export default function SystemHealth() {
         </div>
       ) : health ? (
         <div className="row g-4">
-          
+
           {/* Database Status */}
           <div className="col-md-6">
-            <div className="card h-100">
-              <div className="card-header fw-semibold bg-dark text-white">
-                <i className="bi bi-database me-2"></i>Database (MongoDB)
+            <div className="card h-100" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+              <div className="card-header fw-semibold" style={{ backgroundColor: 'var(--bg-elevated)', borderBottom: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                <i className="bi bi-database me-2 text-primary"></i>Database (MongoDB)
               </div>
               <div className="card-body">
                 <div className="d-flex align-items-center mb-3">
-                  <div className={`me-3 rounded-circle d-flex align-items-center justify-content-center ${health.database.connectionState === 'connected' ? 'bg-success' : 'bg-danger'}`} style={{width: '48px', height: '48px'}}>
+                  <div className={`me-3 rounded-circle d-flex align-items-center justify-content-center ${health.database.connectionState === 'connected' ? 'bg-success' : 'bg-danger'}`} style={{ width: '48px', height: '48px' }}>
                     <i className="bi bi-hdd-network text-white fs-4"></i>
                   </div>
                   <div>
-                    <h5 className="mb-0 text-capitalize">{health.database.connectionState}</h5>
+                    <h5 className="mb-0 text-capitalize" style={{ color: 'var(--text-primary)' }}>{health.database.connectionState}</h5>
                     <div className="text-muted small">Name: {health.database.databaseName || '(none)'}</div>
                   </div>
                 </div>
 
-                <h6 className="fw-semibold mt-4 mb-3 border-bottom pb-2">Collections</h6>
+                <h6 className="fw-semibold mt-4 mb-3 border-bottom border-secondary pb-2" style={{ color: 'var(--text-secondary)' }}>Collections</h6>
                 {health.database.collections && health.database.collections.length > 0 ? (
                   <table className="table table-sm table-bordered">
-                    <thead className="table-light">
-                      <tr>
+                    <thead>
+                      <tr style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-secondary)' }}>
                         <th>Collection Name</th>
                         <th className="text-end">Documents</th>
                       </tr>
@@ -95,9 +95,9 @@ export default function SystemHealth() {
 
           {/* AI Provider Status */}
           <div className="col-md-6">
-            <div className="card h-100">
-              <div className="card-header fw-semibold bg-dark text-white">
-                <i className="bi bi-cpu me-2"></i>AI Provider
+            <div className="card h-100" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+              <div className="card-header fw-semibold" style={{ backgroundColor: 'var(--bg-elevated)', borderBottom: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                <i className="bi bi-cpu me-2 text-primary"></i>AI Provider
               </div>
               <div className="card-body">
                 <div className="mb-4">
@@ -109,7 +109,7 @@ export default function SystemHealth() {
                 </div>
 
                 <h6 className="text-muted small text-uppercase fw-bold mb-3">API Keys Configured</h6>
-                
+
                 <div className="d-flex align-items-center justify-content-between p-3 border rounded mb-2">
                   <div className="fw-semibold">Google Gemini SDK</div>
                   {health.aiProvider.geminiConfigured ? (

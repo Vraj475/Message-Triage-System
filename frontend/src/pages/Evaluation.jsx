@@ -166,17 +166,17 @@ export default function Evaluation() {
         </div>
       )}
 
-      <div className="card shadow-sm">
-        <div className="card-header fw-semibold bg-white d-flex justify-content-between align-items-center">
-          <div>
+      <div className="card shadow-sm" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+        <div className="card-header fw-semibold py-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: 'transparent', borderBottom: '1px solid var(--border)' }}>
+          <div className="d-flex align-items-center gap-2">
             <i className="bi bi-person-check me-2 text-primary"></i>
-            Ground Truth Labeling
+            <span>Ground Truth Labeling</span>
           </div>
           <div className="d-flex gap-2 align-items-center">
             <span className="small text-muted me-2">Select Dataset:</span>
             <select
               className="form-select form-select-sm"
-              style={{ width: 'auto' }}
+              style={{ width: 'auto', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
               value={activeDatasetId}
               onChange={e => setActiveDatasetId(e.target.value)}
             >
@@ -186,7 +186,8 @@ export default function Evaluation() {
               ))}
             </select>
             <button
-              className="btn btn-primary btn-sm ms-3"
+              className="btn btn-primary btn-sm ms-3 text-white fw-bold"
+              style={{ backgroundColor: 'var(--accent)', border: 'none', padding: '6px 16px' }}
               onClick={handleRunEvaluation}
               disabled={evaluating || !activeDatasetId}
             >
@@ -209,9 +210,9 @@ export default function Evaluation() {
               No messages found in this dataset.
             </div>
           ) : (
-            <table className="table table-bordered table-hover mb-0 small">
-              <thead className="table-secondary">
-                <tr>
+            <table className="table table-bordered table-hover mb-0 small" style={{ color: 'var(--text-primary)' }}>
+              <thead>
+                <tr style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-secondary)' }}>
                   <th style={{ width: '30%' }}>Message</th>
                   <th style={{ width: '15%' }}>AI Decision</th>
                   <th style={{ width: '15%' }}>Your Category</th>
@@ -227,15 +228,15 @@ export default function Evaluation() {
                   const triage = msg.triage;
 
                   return (
-                    <tr key={msg._id} className={isSaved ? 'table-success' : ''}>
-                      <td className="font-monospace" style={{ wordBreak: 'break-word', color: '#555' }}>
+                    <tr key={msg._id} style={{ backgroundColor: isSaved ? 'rgba(62, 207, 142, 0.08)' : 'transparent' }}>
+                      <td className="font-monospace" style={{ wordBreak: 'break-word', color: 'var(--text-primary)' }}>
                         {msg.rawText.slice(0, 150)}{msg.rawText.length > 150 ? '…' : ''}
                       </td>
                       <td>
                         {triage ? (
                           <>
-                            <div><span className="badge bg-secondary mb-1">{triage.priority}</span></div>
-                            <div className="fw-semibold text-dark">{triage.category}</div>
+                            <div><span className="badge bg-secondary mb-1" style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--accent)', border: '1px solid var(--border)' }}>{triage.priority}</span></div>
+                            <div className="fw-semibold" style={{ color: 'var(--text-primary)' }}>{triage.category}</div>
                             <div className="text-muted" style={{ fontSize: '0.8em' }}>{Math.round(triage.confidence * 100)}% conf</div>
                           </>
                         ) : (
@@ -244,7 +245,8 @@ export default function Evaluation() {
                       </td>
                       <td>
                         <select
-                          className="form-select form-select-sm border-secondary"
+                          className="form-select form-select-sm"
+                          style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                           value={label.category || ''}
                           onChange={e => updateLabel(msg._id, 'category', e.target.value)}
                         >
@@ -255,7 +257,8 @@ export default function Evaluation() {
                       </td>
                       <td>
                         <select
-                          className="form-select form-select-sm border-secondary"
+                          className="form-select form-select-sm"
+                          style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                           value={label.priority || ''}
                           onChange={e => updateLabel(msg._id, 'priority', e.target.value)}
                         >
@@ -265,7 +268,8 @@ export default function Evaluation() {
                       </td>
                       <td>
                         <select
-                          className="form-select form-select-sm border-secondary"
+                          className="form-select form-select-sm"
+                          style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}
                           value={label.needsHuman === undefined ? '' : String(label.needsHuman)}
                           onChange={e => updateLabel(msg._id, 'needsHuman', e.target.value === 'true')}
                         >
@@ -279,7 +283,13 @@ export default function Evaluation() {
                           className={`btn btn-sm ${isSaved ? 'btn-success' : 'btn-outline-primary'}`}
                           onClick={() => saveLabel(msg)}
                           disabled={loading}
-                          style={{ minWidth: '70px' }}
+                          style={{
+                            minWidth: '70px',
+                            backgroundColor: isSaved ? 'var(--success)' : 'transparent',
+                            borderColor: isSaved ? 'var(--success)' : 'var(--accent)',
+                            color: isSaved ? '#0f1117' : 'var(--accent)',
+                            fontWeight: 600,
+                          }}
                         >
                           {isSaved ? <><i className="bi bi-check2 me-1"></i>Saved</> : 'Save'}
                         </button>
